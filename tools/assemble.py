@@ -16,8 +16,9 @@ import re
 import shutil
 import sys
 
-НАВ = [("index.html", "Обзор"), ("pains.html", "Все боли"),
-       ("money.html", "Где деньги"), ("sellers.html", "Селлеры"),
+НАВ = [("index.html", "Обзор"), ("economics.html", "Экономика"),
+       ("pains.html", "Все боли"), ("money.html", "Где деньги"),
+       ("plan.html", "План"), ("sellers.html", "Селлеры"),
        ("method.html", "Методика")]
 
 ОБОЛОЧКА = """<!doctype html>
@@ -82,6 +83,11 @@ def main():
     open(os.path.join(out, ".nojekyll"), "w").close()
 
     stats = json.load(open(os.path.join(frags, "stats.json"), encoding="utf-8"))
+    # Числа экономики лежат отдельным файлом — сливаем в общий словарь, чтобы
+    # в рукописном тексте не надо было помнить, из какого расчёта что берётся.
+    эк = os.path.join(frags, "econ.json")
+    if os.path.exists(эк):
+        stats.update(json.load(open(эк, encoding="utf-8")))
     куски = {}
     for имя in os.listdir(frags):
         if имя.endswith(".html"):
